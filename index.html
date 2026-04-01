@@ -28,7 +28,7 @@
     background: var(--light);
     color: var(--text);
     line-height: 1.7;
-    font-size: 1.08rem;
+    font-size: 1.18rem;
   }
 
   /* HEADER */
@@ -37,6 +37,9 @@
     color: var(--white);
     padding: 2rem 2rem 1.5rem;
     border-bottom: 4px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   header .badge {
     font-size: 0.85rem;
@@ -62,6 +65,9 @@
   .progress-bar-wrap {
     background: var(--navy);
     padding: 0 2rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 99;
   }
   .progress-label {
     font-size: 0.88rem;
@@ -150,12 +156,12 @@
   .phase-title-wrap { flex: 1; }
   .phase-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     font-weight: 400;
     color: var(--navy);
   }
   .phase-subtitle {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: var(--muted);
     margin-top: 0.1rem;
   }
@@ -201,18 +207,18 @@
 
   h3 {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.2rem;
+    font-size: 1.35rem;
     font-weight: 400;
     color: var(--navy);
     margin: 1.2rem 0 0.5rem;
   }
   h3:first-child { margin-top: 0; }
 
-  p { margin-bottom: 0.8rem; font-size: 1.05rem; }
+  p { margin-bottom: 0.8rem; font-size: 1.15rem; }
 
   ul, ol {
     margin: 0.4rem 0 0.8rem 1.3rem;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
   li { margin-bottom: 0.3rem; }
 
@@ -223,7 +229,7 @@
     border-radius: 0 6px 6px 0;
     padding: 0.9rem 1rem;
     margin: 1rem 0;
-    font-size: 1.02rem;
+    font-size: 1.12rem;
   }
   .callout.warning {
     border-color: var(--accent);
@@ -244,7 +250,7 @@
     border-radius: 6px;
     padding: 0.8rem 1rem;
     margin: 0.5rem 0 1rem;
-    font-size: 1.02rem;
+    font-size: 1.12rem;
     font-family: 'DM Sans', sans-serif;
   }
   .prompt-block .prompt-label {
@@ -287,7 +293,7 @@
   .quiz-q p {
     font-weight: 500;
     margin-bottom: 0.5rem;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
   }
   .quiz-option {
     display: flex;
@@ -299,7 +305,7 @@
     cursor: pointer;
     border: 1px solid var(--border);
     background: var(--white);
-    font-size: 1.02rem;
+    font-size: 1.12rem;
     transition: background 0.15s, border-color 0.15s;
   }
   .quiz-option:hover { background: #dde8f7; border-color: var(--steel); }
@@ -329,7 +335,7 @@
     margin-top: 1rem;
     padding: 0.75rem 1rem;
     border-radius: 6px;
-    font-size: 1.02rem;
+    font-size: 1.12rem;
     font-weight: 500;
     display: none;
   }
@@ -374,7 +380,7 @@
     align-items: flex-start;
     padding: 0.4rem 0;
     border-bottom: 1px solid #2e3f62;
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   .ref-row:last-child { border: none; }
   .ref-app { color: #a8c0e0; font-weight: 600; min-width: 90px; }
