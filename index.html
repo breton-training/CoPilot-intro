@@ -422,6 +422,36 @@
   .mark-complete-btn:hover { background: #1f5c3a; }
   .mark-complete-btn.done { background: #a0b4a0; cursor: default; }
 
+  .reset-phase-btn {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: all 0.15s;
+  }
+  .reset-phase-btn:hover { color: var(--red); border-color: var(--red); }
+
+  .reset-all-btn {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 0.75rem;
+  }
+  .reset-all-btn:hover { color: var(--red); border-color: var(--red); }
+
   /* REFERENCE CARD */
   .ref-card {
     background: var(--navy);
@@ -1154,6 +1184,7 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
 
 <footer>
   Developed for BLM/DOI HR Specialist training · breton-training · Content reflects M365 Copilot capabilities as of 2025 · Always verify regulatory content against current OPM and DOL guidance
+  <br><button class="reset-all-btn" onclick="resetAllProgress()">Reset All Progress</button>
 </footer>
 
 <script>
@@ -1232,22 +1263,29 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
     const card = document.getElementById('phase-interlude');
     const badge = document.getElementById('status-interlude');
     const lbl = document.getElementById('lbl-interlude');
+    const wrap = document.getElementById('complete-wrap-interlude');
     if (progress['phase_interlude']) {
       card.classList.add('completed');
       badge.textContent = 'Completed';
       if (lbl) lbl.classList.add('done');
-      const wrap = document.getElementById('complete-wrap-interlude');
-      if (wrap && !wrap.querySelector('.mark-complete-btn')) {
+      if (wrap) {
+        wrap.innerHTML = '';
         const btn = document.createElement('button');
         btn.className = 'mark-complete-btn done';
         btn.textContent = '✓ Professional Use Completed';
         btn.disabled = true;
         wrap.appendChild(btn);
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'reset-phase-btn';
+        resetBtn.textContent = 'Reset';
+        resetBtn.onclick = () => resetInterlude();
+        wrap.appendChild(resetBtn);
       }
     } else {
       card.classList.remove('completed');
       badge.textContent = 'Required reading';
       if (lbl) lbl.classList.remove('done');
+      if (wrap) wrap.innerHTML = '';
     }
   }
 
@@ -1323,30 +1361,77 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
       const statusEl = document.getElementById('status-' + i);
       const lblEl = document.getElementById('lbl-' + i);
 
+      const wrap = document.getElementById('complete-wrap-' + i);
       if (progress['phase_' + i]) {
         done++;
         card.classList.add('completed');
         statusEl.textContent = 'Completed';
         if (lblEl) lblEl.classList.add('done');
 
-        // restore complete button
-        const wrap = document.getElementById('complete-wrap-' + i);
-        if (wrap && !wrap.querySelector('.mark-complete-btn')) {
+        // restore complete button + reset link
+        if (wrap) {
+          wrap.innerHTML = '';
           const btn = document.createElement('button');
           btn.className = 'mark-complete-btn done';
           btn.textContent = '✓ Phase ' + (i + 1) + ' Completed';
           btn.disabled = true;
           wrap.appendChild(btn);
+          const resetBtn = document.createElement('button');
+          resetBtn.className = 'reset-phase-btn';
+          resetBtn.textContent = 'Reset';
+          resetBtn.onclick = () => resetPhase(i);
+          wrap.appendChild(resetBtn);
         }
       } else {
         card.classList.remove('completed');
         statusEl.textContent = 'Not started';
         if (lblEl) lblEl.classList.remove('done');
+        if (wrap) wrap.innerHTML = '';
       }
     }
 
     const pct = Math.round((done / PHASE_COUNT) * 100);
     document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function resetPhase(idx) {
+    const progress = loadProgress();
+    delete progress['phase_' + idx];
+    saveProgress(progress);
+    // Clear quiz state
+    const resultEl = document.getElementById('result-' + idx);
+    if (resultEl) { resultEl.style.display = 'none'; }
+    document.querySelectorAll(`#quiz-${idx} input[type="radio"]`).forEach(r => { r.checked = false; });
+    document.querySelectorAll(`#quiz-${idx} .quiz-option`).forEach(o => { o.classList.remove('correct','incorrect','selected'); });
+    applyProgress();
+  }
+
+  function resetInterlude() {
+    const progress = loadProgress();
+    delete progress['phase_interlude'];
+    saveProgress(progress);
+    const resultEl = document.getElementById('result-interlude');
+    if (resultEl) { resultEl.style.display = 'none'; }
+    document.querySelectorAll('#quiz-interlude input[type="radio"]').forEach(r => { r.checked = false; });
+    document.querySelectorAll('#quiz-interlude .quiz-option').forEach(o => { o.classList.remove('correct','incorrect','selected'); });
+    applyInterludeProgress();
+  }
+
+  function resetAllProgress() {
+    if (!confirm('Reset all progress? This will clear all completed phases and quiz answers.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    for (let i = 0; i < PHASE_COUNT; i++) {
+      const resultEl = document.getElementById('result-' + i);
+      if (resultEl) resultEl.style.display = 'none';
+      document.querySelectorAll(`#quiz-${i} input[type="radio"]`).forEach(r => { r.checked = false; });
+      document.querySelectorAll(`#quiz-${i} .quiz-option`).forEach(o => { o.classList.remove('correct','incorrect','selected'); });
+    }
+    const ri = document.getElementById('result-interlude');
+    if (ri) ri.style.display = 'none';
+    document.querySelectorAll('#quiz-interlude input[type="radio"]').forEach(r => { r.checked = false; });
+    document.querySelectorAll('#quiz-interlude .quiz-option').forEach(o => { o.classList.remove('correct','incorrect','selected'); });
+    applyProgress();
+    applyInterludeProgress();
   }
 
   // Init
