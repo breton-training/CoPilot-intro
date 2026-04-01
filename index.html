@@ -1399,13 +1399,24 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
       const lblEl = document.getElementById('lbl-' + i);
 
       const wrap = document.getElementById('complete-wrap-' + i);
+      // Remove any old reset button from header
+      const oldReset = card.querySelector('.phase-header .reset-phase-btn');
+      if (oldReset) oldReset.remove();
+
       if (progress['phase_' + i]) {
         done++;
         card.classList.add('completed');
         statusEl.textContent = 'Completed';
         if (lblEl) lblEl.classList.add('done');
 
-        // restore complete button + reset link
+        // Add reset button in header next to Completed badge
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'reset-phase-btn';
+        resetBtn.textContent = 'Reset';
+        resetBtn.onclick = (e) => { e.stopPropagation(); resetPhase(i); };
+        statusEl.after(resetBtn);
+
+        // Restore complete button in quiz body
         if (wrap) {
           wrap.innerHTML = '';
           const btn = document.createElement('button');
@@ -1413,11 +1424,6 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
           btn.textContent = '✓ Phase ' + (i + 1) + ' Completed';
           btn.disabled = true;
           wrap.appendChild(btn);
-          const resetBtn = document.createElement('button');
-          resetBtn.className = 'reset-phase-btn';
-          resetBtn.textContent = 'Reset';
-          resetBtn.onclick = () => resetPhase(i);
-          wrap.appendChild(resetBtn);
         }
       } else {
         card.classList.remove('completed');
