@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copilot for M365 — HR Specialist Training</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --blue: #2563a8;
+    --steel: #4a6fa5;
+    --sky: #e8f0fb;
+    --accent: #c8922a;
+    --green: #2d7a4f;
+    --red: #b83232;
+    --light: #f5f7fa;
+    --border: #d1dae8;
+    --text: #1e2535;
+    --muted: #5a6478;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  header p {
+    font-size: 0.9rem;
+    color: #a8b8d4;
+    margin-top: 0.4rem;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--navy);
+    padding: 0 2rem 1.5rem;
+  }
+  .progress-label {
+    font-size: 0.75rem;
+    color: #7a90b4;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .progress-track {
+    background: #2e3f62;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, var(--steel), var(--accent));
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+  .progress-phases {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+  .progress-phases span {
+    font-size: 0.68rem;
+    color: #5a7090;
+  }
+  .progress-phases span.done { color: var(--accent); }
+
+  /* LAYOUT */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* PHASE CARD */
+  .phase-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .phase-card:hover { box-shadow: 0 4px 20px rgba(37,99,168,0.08); }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .phase-card.open .phase-header {
+    border-bottom-color: var(--border);
+  }
+
+  .phase-num {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: var(--sky);
+    color: var(--blue);
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    transition: all 0.2s;
+  }
+  .phase-card.completed .phase-num {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .phase-title-wrap { flex: 1; }
+  .phase-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--navy);
+  }
+  .phase-subtitle {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+
+  .phase-status {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    background: var(--sky);
+    color: var(--steel);
+  }
+  .phase-card.completed .phase-status {
+    background: #e6f4ec;
+    color: var(--green);
+  }
+
+  .phase-chevron {
+    font-size: 1rem;
+    color: var(--muted);
+    transition: transform 0.25s;
+  }
+  .phase-card.open .phase-chevron { transform: rotate(180deg); }
+
+  /* PHASE BODY */
+  .phase-body {
+    display: none;
+    padding: 1.5rem;
+  }
+  .phase-card.open .phase-body { display: block; }
+
+  /* CONTENT BLOCKS */
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--navy);
+    margin: 1.2rem 0 0.5rem;
+  }
+  h3:first-child { margin-top: 0; }
+
+  p { margin-bottom: 0.8rem; font-size: 0.92rem; }
+
+  ul, ol {
+    margin: 0.4rem 0 0.8rem 1.3rem;
+    font-size: 0.92rem;
+  }
+  li { margin-bottom: 0.3rem; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-left: 4px solid var(--blue);
+    background: var(--sky);
+    border-radius: 0 6px 6px 0;
+    padding: 0.9rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+  }
+  .callout.warning {
+    border-color: var(--accent);
+    background: #fdf6e8;
+  }
+  .callout.danger {
+    border-color: var(--red);
+    background: #fdf0f0;
+  }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .callout.warning strong { color: var(--accent); }
+  .callout.danger strong { color: var(--red); }
+
+  /* PROMPT EXAMPLES */
+  .prompt-block {
+    background: #f0f4fa;
+    border: 1px solid #c5d3e8;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 0.88rem;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .prompt-block .prompt-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  .prompt-block .prompt-text {
+    color: var(--navy);
+    line-height: 1.5;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* QUIZ SECTION */
+  .quiz-section {
+    background: var(--sky);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .quiz-section h3 {
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+  }
+
+  .quiz-q {
+    margin-bottom: 1.2rem;
+  }
+  .quiz-q p {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.3rem;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font-size: 0.88rem;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .quiz-option:hover { background: #dde8f7; border-color: var(--steel); }
+  .quiz-option.selected { border-color: var(--blue); background: #d6e5f7; }
+  .quiz-option.correct { border-color: var(--green); background: #e6f4ec; }
+  .quiz-option.incorrect { border-color: var(--red); background: #fdf0f0; }
+  .quiz-option input { margin-top: 2px; }
+
+  .quiz-btn {
+    display: inline-block;
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s;
+  }
+  .quiz-btn:hover { background: var(--navy); }
+  .quiz-btn:disabled { background: #a0afc4; cursor: default; }
+
+  .quiz-result {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: none;
+  }
+  .quiz-result.pass { background: #e6f4ec; color: var(--green); border: 1px solid #a8d8b8; }
+  .quiz-result.fail { background: #fdf0f0; color: var(--red); border: 1px solid #e8b0b0; }
+
+  .mark-complete-btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 0.65rem 1.5rem;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.15s;
+  }
+  .mark-complete-btn:hover { background: #1f5c3a; }
+  .mark-complete-btn.done { background: #a0b4a0; cursor: default; }
+
+  /* REFERENCE CARD */
+  .ref-card {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+  }
+  .ref-card h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .ref-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #2e3f62;
+    font-size: 0.85rem;
+  }
+  .ref-row:last-child { border: none; }
+  .ref-app { color: #a8c0e0; font-weight: 600; min-width: 90px; }
+  .ref-tip { color: #d0dff0; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 1.5rem 1rem 1rem; }
+    .progress-bar-wrap { padding: 0 1rem 1.25rem; }
+    .container { padding: 1.25rem 1rem; }
+    .phase-header { padding: 1rem; }
+    .phase-body { padding: 1.1rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">U.S. Department of the Interior · BLM · HR Specialist</div>
+  <h1>Microsoft Copilot for M365<br>Practical Training Guide</h1>
+  <p>GS-12 · Qualifications &amp; FMLA · Self-paced · 4 Phases</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">Your progress</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-phases">
+    <span id="lbl-0">Phase 1</span>
+    <span id="lbl-1">Phase 2</span>
+    <span id="lbl-2">Phase 3</span>
+    <span id="lbl-3">Phase 4</span>
+    <span id="lbl-4">Phase 5</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════
+       PHASE 1 — MENTAL MODEL
+  ══════════════════════════════════════════ -->
+  <div class="phase-card" id="phase-0">
+    <div class="phase-header" onclick="togglePhase(0)">
+      <div class="phase-num">1</div>
+      <div class="phase-title-wrap">
+        <div class="phase-title">What Copilot Actually Is</div>
+        <div class="phase-subtitle">Build the right mental model before touching any features</div>
+      </div>
+      <div class="phase-status" id="status-0">Not started</div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">Foundation</div>
+
+      <h3>The one thing you must understand first</h3>
+      <p>Copilot for M365 is not a search engine and it does not know federal law. It is an AI assistant that reads and works with <strong>your own content</strong> — your emails, your Word documents, your Teams meetings, your SharePoint files — within your government tenant.</p>
+
+      <div class="callout warning">
+        <strong>⚠ Critical boundary</strong>
+        Copilot cannot look up OPM policy, DOL FMLA regulations, CFR, or any federal guidance unless those documents are stored in your M365 tenant and you point it to them. It does not browse the internet. Decisions about FMLA eligibility or qualifications must always come from you using the actual regulatory source.
+      </div>
+
+      <h3>Where does Copilot get its information?</h3>
+      <p>Think of Copilot as a very capable assistant who has read only what's in your office filing cabinet — and nothing else. Specifically, it can access:</p>
+      <ul>
+        <li>Your Outlook emails and calendar</li>
+        <li>Your Teams chats and meeting transcripts</li>
+        <li>Word, Excel, and PowerPoint files you have permission to open</li>
+        <li>SharePoint and OneDrive files in your tenant</li>
+      </ul>
+      <p>It cannot access other agencies' systems, the internet, or any database it hasn't been connected to.</p>
+
+      <h3>What Copilot is good at</h3>
+      <ul>
+        <li>Summarizing long email threads quickly</li>
+        <li>Drafting a first version of a letter or memo (you always review and approve)</li>
+        <li>Organizing and formatting information you provide</li>
+        <li>Recapping a Teams meeting you attended or missed</li>
+        <li>Helping you think through how to word something</li>
+      </ul>
+
+      <h3>What Copilot is not good at</h3>
+      <ul>
+        <li>Making HR decisions — that is always your judgment</li>
+        <li>Knowing what the law says (unless you paste it in)</li>
+        <li>Being accurate about specific names, dates, or case details it wasn't given</li>
+        <li>Replacing your expertise</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Think of it this way</strong>
+        Copilot is like a very fast, very well-read intern. It can draft, summarize, and organize. You are the HR Specialist who reviews, corrects, and signs off. The responsibility never moves to Copilot — it stays with you.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Knowledge Check — Phase 1</div>
+
+      <div class="quiz-section" id="quiz-0">
+        <h3>Answer these questions before moving on</h3>
+
+        <div class="quiz-q" id="q0-0">
+          <p>1. You need to verify whether an employee qualifies for FMLA. You ask Copilot "Does this employee qualify for FMLA?" What should you expect?</p>
+          <label class="quiz-option"><input type="radio" name="q0-0" value="a"> Copilot will look up the DOL FMLA regulations and give you a definitive answer.</label>
+          <label class="quiz-option"><input type="radio" name="q0-0" value="b"> Copilot will draft a response based on what you've told it, but the determination is always yours using the actual regulation.</label>
+          <label class="quiz-option"><input type="radio" name="q0-0" value="c"> Copilot will search your agency's HR database for the employee's record.</label>
+        </div>
+
+        <div class="quiz-q" id="q0-1">
+          <p>2. Which of these is a realistic, appropriate use of Copilot for an HR Specialist?</p>
+          <label class="quiz-option"><input type="radio" name="q0-1" value="a"> Using Copilot to decide whether to approve or deny an FMLA request.</label>
+          <label class="quiz-option"><input type="radio" name="q0-1" value="b"> Using Copilot to draft the first version of a notification letter, then reviewing and editing it yourself before sending.</label>
+          <label class="quiz-option"><input type="radio" name="q0-1" value="c"> Using Copilot to access employee records from a federal HR database.</label>
+        </div>
+
+        <div class="quiz-q" id="q0-2">
+          <p>3. Where does Copilot for M365 get the information it uses to help you?</p>
+          <label class="quiz-option"><input type="radio" name="q0-2" value="a"> It searches the entire internet in real time.</label>
+          <label class="quiz-option"><input type="radio" name="q0-2" value="b"> It uses only your content inside your M365 tenant — emails, Teams, SharePoint, and Office files you have access to.</label>
+          <label class="quiz-option"><input type="radio" name="q0-2" value="c"> It connects to a central government AI database with all federal policy.</label>
+        </div>
+
+        <button class="quiz-btn" onclick="checkQuiz(0, {'q0-0':'b','q0-1':'b','q0-2':'b'})">Check My Answers</button>
+        <div class="quiz-result" id="result-0"></div>
+        <div id="complete-wrap-0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 2 — YOUR APPS, YOUR JOB
+  ══════════════════════════════════════════ -->
+  <div class="phase-card" id="phase-1">
+    <div class="phase-header" onclick="togglePhase(1)">
+      <div class="phase-num">2</div>
+      <div class="phase-title-wrap">
+        <div class="phase-title">Copilot in Your Daily Apps</div>
+        <div class="phase-subtitle">Outlook, Teams, Word, and Excel — practical HR use</div>
+      </div>
+      <div class="phase-status" id="status-1">Not started</div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">Outlook</div>
+      <h3>Copilot in Outlook</h3>
+      <p>Copilot appears in Outlook in two main ways: summarizing email threads and helping you draft replies.</p>
+
+      <p><strong>Summarizing a thread:</strong> Open a long email thread. Look for the Copilot icon or "Summary by Copilot" at the top of the thread. Click it and Copilot will give you the key points without making you read every message.</p>
+
+      <p><strong>Drafting a reply:</strong> In a message, click Reply, then look for the Copilot icon in the compose toolbar. You can ask it to draft a reply and give it a direction — formal, brief, detailed. Always read and edit before sending.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt — Outlook draft</div>
+        <div class="prompt-text">"Draft a reply acknowledging this FMLA request was received and that we will contact the employee within 5 business days. Keep it professional and brief."</div>
+      </div>
+
+      <div class="callout warning">
+        <strong>⚠ Before you send</strong>
+        Always read the full draft. Copilot may get names, dates, or case-specific details wrong if it wasn't given that information. You are signing off on every message you send.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Teams</div>
+      <h3>Copilot in Teams</h3>
+      <p>The most useful Teams feature for HR work is meeting recap. After a Teams meeting that was recorded or transcribed, Copilot can give you a summary of what was discussed, decisions made, and action items.</p>
+
+      <p>You can also use Copilot during a live meeting to catch up if you joined late — click the Copilot icon and ask "What have I missed?"</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt — Teams recap</div>
+        <div class="prompt-text">"Summarize this meeting. List any decisions made and any action items assigned."</div>
+      </div>
+
+      <p><em>Note: Meeting transcription must be enabled for this to work. If it isn't available, check with your IT or supervisor.</em></p>
+
+      <hr class="divider">
+      <div class="section-label">Word</div>
+      <h3>Copilot in Word</h3>
+      <p>In a Word document, you'll see a Copilot icon in the left margin or in the toolbar. You can ask Copilot to draft a section, rewrite something for clarity, or summarize a long document you're reading.</p>
+
+      <p>For HR correspondence, the most useful approach is to give Copilot the structure and let it fill in language — then edit for accuracy and policy compliance.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt — Word draft</div>
+        <div class="prompt-text">"Draft a paragraph notifying an employee that their FMLA paperwork has been received and is under review. Use a professional, neutral tone appropriate for federal HR correspondence."</div>
+      </div>
+
+      <div class="callout">
+        <strong>Good practice</strong>
+        Keep approved template language in a document on your SharePoint. You can paste it into the prompt: "Rewrite this paragraph to be clearer: [paste text]." Copilot improves existing language better than it invents new policy language.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Excel</div>
+      <h3>Copilot in Excel</h3>
+      <p>In Excel, Copilot can help you analyze data, add columns, filter, and create summaries. For HR work this might mean sorting case tracking data, identifying patterns, or generating a quick summary of a dataset.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt — Excel</div>
+        <div class="prompt-text">"Show me all rows where the status column is 'Pending' and sort by the date column oldest to newest."</div>
+      </div>
+
+      <p><em>Note: Copilot in Excel works best when your data is formatted as a Table (Insert → Table). If your data isn't in a Table, Copilot may not be able to work with it.</em></p>
+
+      <hr class="divider">
+      <div class="section-label">Knowledge Check — Phase 2</div>
+
+      <div class="quiz-section" id="quiz-1">
+        <h3>Answer these questions before moving on</h3>
+
+        <div class="quiz-q" id="q1-0">
+          <p>1. You open a 40-message email thread about an employee's case. What is the most efficient first step using Copilot?</p>
+          <label class="quiz-option"><input type="radio" name="q1-0" value="a"> Ask Copilot to draft a reply immediately.</label>
+          <label class="quiz-option"><input type="radio" name="q1-0" value="b"> Use the thread summary feature to get the key points before reading everything.</label>
+          <label class="quiz-option"><input type="radio" name="q1-0" value="c"> Use Copilot in Excel to track the email thread.</label>
+        </div>
+
+        <div class="quiz-q" id="q1-1">
+          <p>2. You joined a Teams meeting 15 minutes late. Copilot can help you by:</p>
+          <label class="quiz-option"><input type="radio" name="q1-1" value="a"> Connecting to the recording from a previous meeting on a different platform.</label>
+          <label class="quiz-option"><input type="radio" name="q1-1" value="b"> Telling you what was discussed before you joined, if transcription is active.</label>
+          <label class="quiz-option"><input type="radio" name="q1-1" value="c"> Sending a message to attendees asking them to recap.</label>
+        </div>
+
+        <div class="quiz-q" id="q1-2">
+          <p>3. Why does Copilot in Excel work best when data is formatted as a Table?</p>
+          <label class="quiz-option"><input type="radio" name="q1-2" value="a"> It doesn't matter — Copilot can work with any spreadsheet format equally well.</label>
+          <label class="quiz-option"><input type="radio" name="q1-2" value="b"> Tables give Copilot a structured range to work with, so it can correctly identify columns, rows, and data boundaries.</label>
+          <label class="quiz-option"><input type="radio" name="q1-2" value="c"> Copilot only works in Excel if data was imported from SharePoint.</label>
+        </div>
+
+        <button class="quiz-btn" onclick="checkQuiz(1, {'q1-0':'b','q1-1':'b','q1-2':'b'})">Check My Answers</button>
+        <div class="quiz-result" id="result-1"></div>
+        <div id="complete-wrap-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 3 — FMLA WORKFLOW
+  ══════════════════════════════════════════ -->
+  <div class="phase-card" id="phase-2">
+    <div class="phase-header" onclick="togglePhase(2)">
+      <div class="phase-num">3</div>
+      <div class="phase-title-wrap">
+        <div class="phase-title">Copilot and FMLA Work</div>
+        <div class="phase-subtitle">Where it helps, where it doesn't, and the line between them</div>
+      </div>
+      <div class="phase-status" id="status-2">Not started</div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">Context</div>
+
+      <h3>Why FMLA requires extra caution with AI tools</h3>
+      <p>FMLA administration involves legal determinations, strict timelines, and employee rights under federal law (29 CFR Part 825). Errors — missing a 5-business-day notice deadline, mischaracterizing a serious health condition, incorrect eligibility determination — carry real consequences for employees and for the agency.</p>
+
+      <p>Copilot is a drafting and organizing tool. It does not know the FMLA regulations unless you put them in front of it. It cannot tell you whether an employee is eligible. That determination is yours, based on the law.</p>
+
+      <div class="callout danger">
+        <strong>🚫 Never ask Copilot</strong>
+        "Is this employee eligible for FMLA?" — Copilot will generate a plausible-sounding answer that may be wrong. Eligibility is determined by the statutory criteria (12 months employed, 1,250 hours in the past 12 months, 50 employees within 75 miles). You apply those criteria. Copilot does not.
+      </div>
+
+      <hr class="divider">
+      <h3>Where Copilot genuinely helps in FMLA work</h3>
+
+      <p><strong>1. Organizing case notes</strong><br>
+      If you've taken notes in a Word document or Teams chat about a case, Copilot can help you organize and format them into a chronological case summary.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt</div>
+        <div class="prompt-text">"Organize these case notes into a chronological summary with dates, actions taken, and pending items. Do not add any information that isn't in the notes."</div>
+      </div>
+
+      <p><strong>2. Drafting standard notices</strong><br>
+      FMLA has several required notices: the eligibility notice, rights and responsibilities notice, and designation notice. Copilot can help you draft these using language you provide from your agency's approved templates.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt</div>
+        <div class="prompt-text">"Using the following approved template language, draft an eligibility notice for an employee named [name]. Insert the correct dates where indicated. [Paste template text here.]"</div>
+      </div>
+
+      <p><strong>3. Summarizing long email chains on a case</strong><br>
+      FMLA cases often involve many emails over weeks. Copilot can summarize the thread and pull out key dates and actions.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt</div>
+        <div class="prompt-text">"Summarize this email thread. List all dates mentioned, actions taken by HR, and any outstanding items."</div>
+      </div>
+
+      <p><strong>4. Checking your own writing</strong><br>
+      Paste a draft letter and ask Copilot to check it for clarity, neutral tone, or consistency.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example prompt</div>
+        <div class="prompt-text">"Review this letter for clarity and professional tone. Do not change any of the factual content or dates. Suggest edits only to wording and readability."</div>
+      </div>
+
+      <hr class="divider">
+      <h3>Where Copilot does not help — and why</h3>
+      <ul>
+        <li><strong>Eligibility determinations</strong> — statutory criteria, your call</li>
+        <li><strong>Intermittent leave calculations</strong> — requires case-specific math and judgment</li>
+        <li><strong>Medical certification review</strong> — clinical and legal judgment, not AI</li>
+        <li><strong>Disciplinary action related to FMLA leave</strong> — significant legal exposure, always involve your supervisor or agency counsel</li>
+      </ul>
+
+      <div class="callout">
+        <strong>Good rule of thumb</strong>
+        If the output of a task requires your professional judgment and has a consequence for an employee's rights or employment, Copilot can help you prepare — but it cannot replace your decision.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Knowledge Check — Phase 3</div>
+
+      <div class="quiz-section" id="quiz-2">
+        <h3>Answer these questions before moving on</h3>
+
+        <div class="quiz-q" id="q2-0">
+          <p>1. An employee submits an FMLA request. You ask Copilot: "Is this employee eligible for FMLA?" What is the problem with this approach?</p>
+          <label class="quiz-option"><input type="radio" name="q2-0" value="a"> Copilot will refuse to answer HR questions entirely.</label>
+          <label class="quiz-option"><input type="radio" name="q2-0" value="b"> Copilot may generate a confident-sounding answer that is wrong — eligibility is a legal determination you must make using the statutory criteria.</label>
+          <label class="quiz-option"><input type="radio" name="q2-0" value="c"> Copilot will look up the employee's employment record and answer accurately.</label>
+        </div>
+
+        <div class="quiz-q" id="q2-1">
+          <p>2. Which of these is an appropriate use of Copilot in FMLA case management?</p>
+          <label class="quiz-option"><input type="radio" name="q2-1" value="a"> Asking Copilot to calculate whether an employee has worked 1,250 hours in the past 12 months.</label>
+          <label class="quiz-option"><input type="radio" name="q2-1" value="b"> Asking Copilot to organize your case notes chronologically and flag pending items.</label>
+          <label class="quiz-option"><input type="radio" name="q2-1" value="c"> Asking Copilot to review a medical certification and determine if it describes a serious health condition.</label>
+        </div>
+
+        <div class="quiz-q" id="q2-2">
+          <p>3. You want Copilot to draft a designation notice. What should you do to get a useful, accurate result?</p>
+          <label class="quiz-option"><input type="radio" name="q2-2" value="a"> Ask Copilot to write the notice from scratch using its knowledge of FMLA requirements.</label>
+          <label class="quiz-option"><input type="radio" name="q2-2" value="b"> Paste your agency's approved template language into the prompt and ask Copilot to fill in the specific details.</label>
+          <label class="quiz-option"><input type="radio" name="q2-2" value="c"> Ask Copilot to find the DOL designation notice form online and complete it.</label>
+        </div>
+
+        <button class="quiz-btn" onclick="checkQuiz(2, {'q2-0':'b','q2-1':'b','q2-2':'b'})">Check My Answers</button>
+        <div class="quiz-result" id="result-2"></div>
+        <div id="complete-wrap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 4 — PROMPT LITERACY
+  ══════════════════════════════════════════ -->
+  <div class="phase-card" id="phase-3">
+    <div class="phase-header" onclick="togglePhase(3)">
+      <div class="phase-num">4</div>
+      <div class="phase-title-wrap">
+        <div class="phase-title">Writing Prompts That Work</div>
+        <div class="phase-subtitle">Get useful output instead of generic output</div>
+      </div>
+      <div class="phase-status" id="status-3">Not started</div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">Prompt Fundamentals</div>
+
+      <h3>Why your prompts matter</h3>
+      <p>Copilot produces output based on what you ask and what context you give it. A vague prompt produces a vague result. A specific prompt with clear constraints produces something actually useful.</p>
+
+      <p>You are now doing this after learning the tool — which is the right order. Prompts only make sense when you understand what Copilot can and can't do.</p>
+
+      <h3>The four elements of a strong prompt</h3>
+      <ul>
+        <li><strong>Role</strong> — Tell Copilot what kind of output you need ("as a federal HR specialist...")</li>
+        <li><strong>Task</strong> — Be specific about what you want it to do ("draft", "summarize", "rewrite", "list")</li>
+        <li><strong>Context</strong> — Give it the material to work with (paste text, describe the situation)</li>
+        <li><strong>Constraints</strong> — Tell it what not to do ("do not add information I haven't provided", "keep it under one paragraph", "use professional tone")</li>
+      </ul>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Weak prompt</div>
+        <div class="prompt-text">"Write an FMLA letter."</div>
+      </div>
+      <div class="prompt-block">
+        <div class="prompt-label">Strong prompt</div>
+        <div class="prompt-text">"Draft a professional acknowledgment letter for an FMLA request. The employee submitted the request on [date]. We have 5 business days to provide an eligibility notice. The tone should be neutral and supportive. Do not include any eligibility determination — only confirm receipt and timeline. Keep it to three short paragraphs."</div>
+      </div>
+
+      <h3>Constraints are your safeguard</h3>
+      <p>The most important habit to build: always tell Copilot what <em>not</em> to do. This prevents it from inventing details, adding information you didn't provide, or drifting outside what you need.</p>
+
+      <ul>
+        <li>"Do not add any information that isn't in the notes I provided."</li>
+        <li>"Do not make any legal determinations."</li>
+        <li>"Do not change any dates or names."</li>
+        <li>"Keep the language neutral — this is a government document."</li>
+      </ul>
+
+      <h3>When results aren't what you needed</h3>
+      <p>Don't start over. Refine. Tell Copilot what was wrong:</p>
+      <ul>
+        <li>"That was too long. Give me a version that's two paragraphs maximum."</li>
+        <li>"The tone was too informal. Rewrite it for a formal federal correspondence style."</li>
+        <li>"You added information I didn't provide. Remove anything that wasn't in my original notes."</li>
+      </ul>
+
+      <div class="callout">
+        <strong>The most important habit</strong>
+        Every time Copilot produces output that affects an employee or goes into a file, read it completely before using it. Copilot is fast. Accuracy is your job.
+      </div>
+
+      <hr class="divider">
+
+      <!-- REFERENCE CARD -->
+      <div class="section-label">Quick Reference</div>
+      <div class="ref-card">
+        <h4>Copilot in M365 — HR Quick Reference</h4>
+        <div class="ref-row">
+          <div class="ref-app">Outlook</div>
+          <div class="ref-tip">Summarize thread · Draft reply · Suggest follow-up</div>
+        </div>
+        <div class="ref-row">
+          <div class="ref-app">Teams</div>
+          <div class="ref-tip">Meeting recap · "What did I miss?" · Action items list</div>
+        </div>
+        <div class="ref-row">
+          <div class="ref-app">Word</div>
+          <div class="ref-tip">Draft from outline · Rewrite for clarity · Summarize document</div>
+        </div>
+        <div class="ref-row">
+          <div class="ref-app">Excel</div>
+          <div class="ref-tip">Filter/sort data · Identify patterns · Summarize dataset (use Table format)</div>
+        </div>
+        <div class="ref-row">
+          <div class="ref-app">FMLA use</div>
+          <div class="ref-tip">Organize notes · Draft notices from templates · Summarize case emails</div>
+        </div>
+        <div class="ref-row">
+          <div class="ref-app">Never</div>
+          <div class="ref-tip">Eligibility decisions · Medical certification review · Legal determinations</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Knowledge Check — Phase 4</div>
+
+      <div class="quiz-section" id="quiz-3">
+        <h3>Answer these questions before moving on</h3>
+
+        <div class="quiz-q" id="q3-0">
+          <p>1. Which prompt is more likely to produce a useful result?</p>
+          <label class="quiz-option"><input type="radio" name="q3-0" value="a">"Write an HR letter."</label>
+          <label class="quiz-option"><input type="radio" name="q3-0" value="b">"Draft a two-paragraph acknowledgment that an employee's FMLA paperwork was received on [date]. Use professional, neutral tone. Do not include any eligibility determination."</label>
+          <label class="quiz-option"><input type="radio" name="q3-0" value="c">"Tell me about FMLA."</label>
+        </div>
+
+        <div class="quiz-q" id="q3-1">
+          <p>2. Copilot drafts a letter but includes a detail you didn't provide and that may be incorrect. What should you do?</p>
+          <label class="quiz-option"><input type="radio" name="q3-1" value="a"> Send the letter anyway — Copilot is usually accurate.</label>
+          <label class="quiz-option"><input type="radio" name="q3-1" value="b"> Tell Copilot to remove anything that wasn't in the information you provided, then review the revised draft before using it.</label>
+          <label class="quiz-option"><input type="radio" name="q3-1" value="c"> Start over with a completely new prompt from scratch.</label>
+        </div>
+
+        <div class="quiz-q" id="q3-2">
+          <p>3. What is the purpose of including constraints in a prompt (like "do not add information I didn't provide")?</p>
+          <label class="quiz-option"><input type="radio" name="q3-2" value="a"> Constraints slow Copilot down and produce shorter results.</label>
+          <label class="quiz-option"><input type="radio" name="q3-2" value="b"> Constraints prevent Copilot from inventing or adding details beyond what you gave it, which is critical when accuracy matters.</label>
+          <label class="quiz-option"><input type="radio" name="q3-2" value="c"> Constraints are only needed in Excel, not in Word or Outlook.</label>
+        </div>
+
+        <button class="quiz-btn" onclick="checkQuiz(3, {'q3-0':'b','q3-1':'b','q3-2':'b'})">Check My Answers</button>
+        <div class="quiz-result" id="result-3"></div>
+        <div id="complete-wrap-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PHASE 5 — MAKING COPILOT SOUND LIKE YOU
+  ══════════════════════════════════════════ -->
+  <div class="phase-card" id="phase-4">
+    <div class="phase-header" onclick="togglePhase(4)">
+      <div class="phase-num">5</div>
+      <div class="phase-title-wrap">
+        <div class="phase-title">Making Copilot Sound Like You</div>
+        <div class="phase-subtitle">Stop editing out the "bot" — build your style in from the start</div>
+      </div>
+      <div class="phase-status" id="status-4">Not started</div>
+      <div class="phase-chevron">▼</div>
+    </div>
+    <div class="phase-body">
+      <div class="section-label">The Problem</div>
+
+      <h3>Why Copilot output needs so much editing</h3>
+      <p>Out of the box, Copilot writes the way AI writes — formal to the point of being stiff, padded with filler phrases, and generic. For HR correspondence that has to sound like it came from a person, this creates extra work. The fix isn't to edit every draft — it's to give Copilot your voice before it starts writing.</p>
+
+      <div class="callout warning">
+        <strong>⚠ Federal tone note</strong>
+        Government HR correspondence still has to meet professional standards. The goal isn't casual — it's human, direct, and clear. Cutting bureaucratic filler is appropriate. Changing the formal register of an official notice is not.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">What You Can Do Right Now</div>
+
+      <h3>Your personal style prompt — no IT required</h3>
+      <p>Create a Word document or OneNote page titled something like <em>My Copilot Style Instructions</em>. Keep it open whenever you're working. Copy and paste the style block at the start of any prompt that involves drafting.</p>
+
+      <p>Here is a starting point built for federal HR work. Edit it to match how you actually write:</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Personal style prompt — copy and customize this</div>
+        <div class="prompt-text">Write in a direct, professional tone. Use plain language — avoid bureaucratic filler like "please be advised," "in accordance with the aforementioned," or "at your earliest convenience." Keep sentences short. Use first person where appropriate. Paragraphs should be three sentences or fewer. This is federal HR correspondence — it should sound like it came from a knowledgeable person, not a form letter. Do not add information I haven't provided.</div>
+      </div>
+
+      <p>Paste that block at the top of any drafting prompt, then add your specific request below it. Copilot will apply the style instructions to everything it writes in that session.</p>
+
+      <h3>Phrases to tell Copilot to avoid</h3>
+      <p>If you find yourself deleting the same phrases repeatedly, add them explicitly to your style prompt:</p>
+      <ul>
+        <li>"Do not use the phrase 'please be advised.'"</li>
+        <li>"Do not start sentences with 'It is important to note.'"</li>
+        <li>"Do not use 'leverage' as a verb."</li>
+        <li>"Do not end letters with 'Thank you for your attention to this matter.'"</li>
+      </ul>
+      <p>Build this list over time as you notice patterns in what Copilot produces that you always change.</p>
+
+      <h3>Saving your style prompt for reuse</h3>
+      <p>The simplest system: keep a file called <strong>Copilot Prompts.docx</strong> on your SharePoint or OneDrive. One section for your style block, another for your most-used prompt templates (FMLA acknowledgment, eligibility notice, etc.). Open it alongside whatever you're working on. This becomes your personal prompt library — no special technology needed.</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Example — style prompt + task combined</div>
+        <div class="prompt-text">Write in a direct, professional tone. Use plain language. Short paragraphs. No filler phrases. Do not add information I haven't provided.
+
+Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted on [date]. Inform the employee we will provide an eligibility determination within five business days. Do not include any eligibility determination in this letter.</div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">If Your Tenant Allows It</div>
+
+      <h3>What to ask IT about custom agents</h3>
+      <p>Some M365 tenants — depending on the agency's Copilot license and IT policy — include access to <strong>Copilot Studio</strong>, which allows building a custom agent with your style instructions baked in permanently. You would not need to paste your style block every time.</p>
+
+      <p>Ask your IT helpdesk this exact question:</p>
+
+      <div class="prompt-block">
+        <div class="prompt-label">Question to ask IT</div>
+        <div class="prompt-text">"Does our M365 tenant include Copilot Studio, or the ability to create custom Copilot agents? And if so, is that feature enabled for end users or does it require a request?"</div>
+      </div>
+
+      <p>If the answer is yes and it's available to you, a custom agent can hold your style instructions, your most-used prompt templates, and even links to your agency's approved FMLA template language — so every draft starts from your baseline, not Copilot's default.</p>
+
+      <div class="callout">
+        <strong>Realistic expectation</strong>
+        Many federal tenants have Copilot Studio locked to administrators or require a separate license tier. The personal style prompt approach works regardless — and it costs nothing and requires no approval.
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Knowledge Check — Phase 5</div>
+
+      <div class="quiz-section" id="quiz-4">
+        <h3>Answer these questions before moving on</h3>
+
+        <div class="quiz-q" id="q4-0">
+          <p>1. What is the most practical way to make Copilot drafts sound more like you, without needing IT involvement?</p>
+          <label class="quiz-option"><input type="radio" name="q4-0" value="a"> Request a custom AI model trained on your writing from your IT department.</label>
+          <label class="quiz-option"><input type="radio" name="q4-0" value="b"> Build a personal style prompt and paste it at the start of any drafting request.</label>
+          <label class="quiz-option"><input type="radio" name="q4-0" value="c"> Use Copilot Studio to create a personal agent — it's available to all M365 users.</label>
+        </div>
+
+        <div class="quiz-q" id="q4-1">
+          <p>2. You keep deleting the phrase "please be advised" from every Copilot draft. What's the most efficient fix?</p>
+          <label class="quiz-option"><input type="radio" name="q4-1" value="a"> Manually delete it each time — there's no way to prevent Copilot from using specific phrases.</label>
+          <label class="quiz-option"><input type="radio" name="q4-1" value="b"> Add "Do not use the phrase 'please be advised'" to your personal style prompt.</label>
+          <label class="quiz-option"><input type="radio" name="q4-1" value="c"> Switch to a different Microsoft 365 app for drafting.</label>
+        </div>
+
+        <div class="quiz-q" id="q4-2">
+          <p>3. What does Copilot Studio allow that a standard personal style prompt does not?</p>
+          <label class="quiz-option"><input type="radio" name="q4-2" value="a"> Access to federal HR databases and OPM policy.</label>
+          <label class="quiz-option"><input type="radio" name="q4-2" value="b"> A custom agent with your style and templates built in permanently — no pasting required each time.</label>
+          <label class="quiz-option"><input type="radio" name="q4-2" value="c"> The ability to send emails automatically without your review.</label>
+        </div>
+
+        <button class="quiz-btn" onclick="checkQuiz(4, {'q4-0':'b','q4-1':'b','q4-2':'b'})">Check My Answers</button>
+        <div class="quiz-result" id="result-4"></div>
+        <div id="complete-wrap-4"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Developed for BLM/DOI HR Specialist training · breton-training · Content reflects M365 Copilot capabilities as of 2025 · Always verify regulatory content against current OPM and DOL guidance
+</footer>
+
+<script>
+  const PHASE_COUNT = 5;
+  const STORAGE_KEY = 'copilot_training_progress';
+
+  function loadProgress() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+  function saveProgress(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function togglePhase(idx) {
+    const card = document.getElementById('phase-' + idx);
+    card.classList.toggle('open');
+  }
+
+  function checkQuiz(phaseIdx, answers) {
+    let correct = 0;
+    const total = Object.keys(answers).length;
+
+    Object.entries(answers).forEach(([qid, correctVal]) => {
+      const selected = document.querySelector(`input[name="${qid}"]:checked`);
+      const options = document.querySelectorAll(`input[name="${qid}"]`);
+      options.forEach(opt => {
+        const label = opt.closest('.quiz-option');
+        label.classList.remove('selected', 'correct', 'incorrect');
+        if (opt.value === correctVal) label.classList.add('correct');
+        else if (selected && opt === selected && opt.value !== correctVal) label.classList.add('incorrect');
+      });
+      if (selected && selected.value === correctVal) correct++;
+    });
+
+    const resultEl = document.getElementById('result-' + phaseIdx);
+    const pct = Math.round((correct / total) * 100);
+
+    if (correct === total) {
+      resultEl.className = 'quiz-result pass';
+      resultEl.textContent = `✓ ${correct} of ${total} correct — you're ready to move on.`;
+      resultEl.style.display = 'block';
+      showCompleteButton(phaseIdx);
+    } else {
+      resultEl.className = 'quiz-result fail';
+      resultEl.textContent = `${correct} of ${total} correct. Review the highlighted answers and try again.`;
+      resultEl.style.display = 'block';
+    }
+  }
+
+  function showCompleteButton(phaseIdx) {
+    const wrap = document.getElementById('complete-wrap-' + phaseIdx);
+    if (wrap.querySelector('.mark-complete-btn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'mark-complete-btn';
+    btn.textContent = 'Mark Phase ' + (phaseIdx + 1) + ' Complete';
+    btn.onclick = () => markComplete(phaseIdx, btn);
+    wrap.appendChild(btn);
+  }
+
+  function markComplete(phaseIdx, btn) {
+    const progress = loadProgress();
+    progress['phase_' + phaseIdx] = true;
+    saveProgress(progress);
+    btn.textContent = '✓ Phase ' + (phaseIdx + 1) + ' Completed';
+    btn.className = 'mark-complete-btn done';
+    btn.disabled = true;
+    applyProgress();
+  }
+
+  function applyProgress() {
+    const progress = loadProgress();
+    let done = 0;
+
+    for (let i = 0; i < PHASE_COUNT; i++) {
+      const card = document.getElementById('phase-' + i);
+      const statusEl = document.getElementById('status-' + i);
+      const lblEl = document.getElementById('lbl-' + i);
+
+      if (progress['phase_' + i]) {
+        done++;
+        card.classList.add('completed');
+        statusEl.textContent = 'Completed';
+        if (lblEl) lblEl.classList.add('done');
+
+        // restore complete button
+        const wrap = document.getElementById('complete-wrap-' + i);
+        if (wrap && !wrap.querySelector('.mark-complete-btn')) {
+          const btn = document.createElement('button');
+          btn.className = 'mark-complete-btn done';
+          btn.textContent = '✓ Phase ' + (i + 1) + ' Completed';
+          btn.disabled = true;
+          wrap.appendChild(btn);
+        }
+      } else {
+        card.classList.remove('completed');
+        statusEl.textContent = 'Not started';
+        if (lblEl) lblEl.classList.remove('done');
+      }
+    }
+
+    const pct = Math.round((done / PHASE_COUNT) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  // Init
+  applyProgress();
+
+  // Open first incomplete phase on load
+  const progress = loadProgress();
+  for (let i = 0; i < PHASE_COUNT; i++) {
+    if (!progress['phase_' + i]) {
+      document.getElementById('phase-' + i).classList.add('open');
+      break;
+    }
+  }
+</script>
+</body>
+</html>
