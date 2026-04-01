@@ -1192,13 +1192,20 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
     const resultEl = document.getElementById('result-interlude');
     if (correct === total) {
       resultEl.className = 'quiz-result pass';
-      resultEl.textContent = `✓ ${correct} of ${total} correct — you're ready for Phase 6.`;
+      resultEl.textContent = `✓ ${correct} of ${total} correct — you're ready to continue.`;
       resultEl.style.display = 'block';
       showInterludeCompleteButton();
     } else {
       resultEl.className = 'quiz-result fail';
-      resultEl.textContent = `${correct} of ${total} correct. Review the highlighted answers and try again.`;
+      resultEl.innerHTML = `${correct} of ${total} correct. Change your answers above and click <strong>Check My Answers</strong> again.`;
       resultEl.style.display = 'block';
+      setTimeout(() => {
+        ['qi-0','qi-1','qi-2'].forEach(qid => {
+          document.querySelectorAll(`input[name="${qid}"]`).forEach(opt => {
+            opt.closest('.quiz-option').classList.remove('correct', 'incorrect');
+          });
+        });
+      }, 2000);
     }
   }
 
@@ -1244,7 +1251,7 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
     }
   }
 
-
+  function togglePhase(idx) {
     const card = document.getElementById('phase-' + idx);
     card.classList.toggle('open');
   }
@@ -1266,7 +1273,6 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
     });
 
     const resultEl = document.getElementById('result-' + phaseIdx);
-    const pct = Math.round((correct / total) * 100);
 
     if (correct === total) {
       resultEl.className = 'quiz-result pass';
@@ -1275,8 +1281,16 @@ Draft a two-paragraph letter acknowledging receipt of an FMLA request submitted 
       showCompleteButton(phaseIdx);
     } else {
       resultEl.className = 'quiz-result fail';
-      resultEl.textContent = `${correct} of ${total} correct. Review the highlighted answers and try again.`;
+      resultEl.innerHTML = `${correct} of ${total} correct. Change your answers above and click <strong>Check My Answers</strong> again.`;
       resultEl.style.display = 'block';
+      // Clear incorrect styling after 2 seconds so user can retry cleanly
+      setTimeout(() => {
+        Object.keys(answers).forEach(qid => {
+          document.querySelectorAll(`input[name="${qid}"]`).forEach(opt => {
+            opt.closest('.quiz-option').classList.remove('correct', 'incorrect');
+          });
+        });
+      }, 2000);
     }
   }
 
